@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaQuest - Learn Java Through Games</title>
+    <style>
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a23 0%, #1a1a3e 50%, #2d1b69 100%);
+            min-height: 100%;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+                radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 160px 30px, #fff, transparent),
+                radial-gradient(1px 1px at 200px 90px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(2px 2px at 240px 50px, #fff, transparent),
+                radial-gradient(1px 1px at 280px 20px, rgba(255,255,255,0.9), transparent),
+                radial-gradient(1px 1px at 320px 70px, #fff, transparent),
+                radial-gradient(2px 2px at 360px 40px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 400px 80px, #fff, transparent),
+                radial-gradient(1px 1px at 440px 30px, rgba(255,255,255,0.6), transparent),
+                radial-gradient(2px 2px at 480px 60px, #fff, transparent),
+                radial-gradient(1px 1px at 520px 90px, rgba(255,255,255,0.7), transparent),
+                radial-gradient(1px 1px at 560px 20px, #fff, transparent),
+                radial-gradient(2px 2px at 600px 50px, rgba(255,255,255,0.8), transparent);
+            background-repeat: repeat;
+            background-size: 550px 550px;
+            animation: twinkle 4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        html {
+            height: 100%;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            padding: 4px;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            height: 20px;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .score-board {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-item h3 {
+            margin: 0;
+            color: #667eea;
+            font-size: 2rem;
+        }
+
+        .score-item p {
+            margin: 5px 0 0 0;
+            color: #666;
+        }
+
+        .game-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .game-card.active {
+            border-color: #667eea;
+            transform: translateY(-5px);
+        }
+
+        .game-card.locked {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .game-card.locked:hover {
+            transform: none;
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .game-card h3 {
+            color: #333;
+            margin: 0 0 15px 0;
+            font-size: 1.5rem;
+        }
+
+        .game-card p {
+            color: #666;
+            margin: 0 0 20px 0;
+            line-height: 1.5;
+        }
+
+        .concept-tag {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .game-area.active {
+            display: block;
+        }
+
+        .question {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            overflow-x: auto;
+            line-height: 1.6;
+        }
+
+        .code-input {
+            background: #4a5568;
+            color: #e2e8f0;
+            border: 2px solid #667eea;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .level-complete {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 20px;
+            margin: 20px 0;
+        }
+
+        .level-complete h2 {
+            margin: 0 0 20px 0;
+            font-size: 2.5rem;
+        }
+
+        .stars {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        /* Landing Page Styles */
+        .landing-page {
+            color: white;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 60px 0;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            margin-bottom: 60px;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-content h2 {
+            font-size: 3rem;
+            margin: 0 0 20px 0;
+            background: linear-gradient(45deg, #fff, #e3f2fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin: 0 0 40px 0;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .btn-hero {
+            font-size: 1.3rem;
+            padding: 20px 40px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-hero:hover {
+            box-shadow: 0 12px 35px rgba(76, 175, 80, 0.4);
+        }
+
+        .why-section, .features-section, .learning-path, .cta-section {
+            margin: 80px 0;
+        }
+
+        .why-section h2, .features-section h2, .learning-path h2, .cta-section h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: white;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .benefit-card {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .benefit-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .benefit-card h3 {
+            color: #667eea;
+            margin: 0 0 15px 0;
+            font-size: 1.4rem;
+        }
+
+        .benefit-card p {
+            line-height: 1.6;
+            color: #666;
+        }
+
+        .features-showcase {
+            display: flex;
+            flex-direction: column;
+            gap: 60px;
+        }
+
+        .feature-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            background: rgba(255,255,255,0.95);
+            padding: 50px;
+            border-radius: 20px;
+            color: #333;
+        }
+
+        .feature-item.reverse {
+            direction: rtl;
+        }
+
+        .feature-item.reverse > * {
+            direction: ltr;
+        }
+
+        .feature-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mock-code, .mock-bug, .mock-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 30px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            min-width: 250px;
+        }
+
+        .code-line {
+            margin: 10px 0;
+        }
+
+        .highlight {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .bug-line.error {
+            color: #f56565;
+            text-decoration: underline wavy #f56565;
+        }
+
+        .bug-fix {
+            color: #4CAF50;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .output-question {
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+
+        .output-code {
+            color: #e2e8f0;
+            margin: 15px 0;
+        }
+
+        .output-answer {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .feature-content h3 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin: 0 0 20px 0;
+        }
+
+        .feature-content p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #666;
+        }
+
+        .learning-path {
+            text-align: center;
+        }
+
+        .path-steps {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .step-item {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 200px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .step-number {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px auto;
+        }
+
+        .step-content h3 {
+            color: #667eea;
+            margin: 0 0 10px 0;
+        }
+
+        .step-content p {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .step-arrow {
+            font-size: 2rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            padding: 60px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .cta-note {
+            font-size: 1rem;
+            margin-top: 20px;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .score-board {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .game-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .benefits-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .feature-item {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                text-align: center;
+            }
+
+            .path-steps {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .step-arrow {
+                transform: rotate(90deg);
+            }
+
+            .why-section h2, .features-section h2, .learning-path h2, .cta-section h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header class="header">
+            <h1>🎮 JavaQuest</h1>
+            <p>Learn Java Programming Through Interactive Games</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </header>
+
+        <div class="score-board">
+            <div class="score-item">
+                <h3 id="totalScore">0</h3>
+                <p>Total Score</p>
+            </div>
+            <div class="score-item">
+                <h3 id="currentLevel">1</h3>
+                <p>Current Level</p>
+            </div>
+            <div class="score-item">
+                <h3 id="completedLevels">0</h3>
+                <p>Completed</p>
+            </div>
+        </div>
+
+        <!-- Landing Page -->
+        <div id="landingPage" class="landing-page">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2>🚀 Transform Your Java Learning Journey</h2>
+                    <p class="hero-subtitle">Master Java programming through interactive games, challenges, and hands-on practice. No more boring tutorials!</p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">Interactive Levels</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Hands-on Learning</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">Practice Questions</div>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-hero" onclick="game.startLearning()">🎮 Start Learning Java Now</button>
+                </div>
+            </div>
+
+            <div class="why-section">
+                <h2>🎯 Why Choose JavaQuest?</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎮</div>
+                        <h3>Gamified Learning</h3>
+                        <p>Turn complex Java concepts into fun, interactive games. Earn points, unlock levels, and track your progress as you master programming fundamentals.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🧠</div>
+                        <h3>Learn by Doing</h3>
+                        <p>No passive reading! Write real Java code, fix bugs, and predict outputs. Every lesson involves hands-on coding practice.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">📈</div>
+                        <h3>Progressive Difficulty</h3>
+                        <p>Start with basics and gradually advance. Each level builds upon previous knowledge, ensuring solid foundation before moving forward.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⚡</div>
+                        <h3>Instant Feedback</h3>
+                        <p>Get immediate explanations for every answer. Understand not just what's correct, but why it's correct with detailed explanations.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎯</div>
+                        <h3>Focused Learning</h3>
+                        <p>Each game targets specific Java concepts. Master variables, loops, conditionals, and control flow through targeted practice.</p>
+                    </div>
+                    
+                    <div class="benefit-card">
+                        <div class="benefit-icon">📱</div>
+                        <h3>Learn Anywhere</h3>
+                        <p>Responsive design works on any device. Practice Java programming on your phone, tablet, or computer - anytime, anywhere.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h2>✨ Powerful Features</h2>
+                <div class="features-showcase">
+                    <div class="feature-item">
+                        <div class="feature-visual">
+                            <div class="mock-code">
+                                <div class="code-line">int age = <span class="highlight">25</span>;</div>
+                                <div class="code-line">String name = <span class="highlight">"Java"</span>;</div>
+                                <div class="code-line">double price = <span class="highlight">19.99</span>;</div>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3>🔍 Interactive Code Completion</h3>
+                            <p>Fill in missing code parts and learn proper Java syntax. Practice declaring variables, writing loops, and using conditionals in real code scenarios.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item reverse">
+                        <div class="feature-visual">
+                            <div class="mock-bug">
+                                <div class="bug-line error">for (int i = 0; i < 5 i++) {</div>
+                                <div class="bug-fix">Missing semicolon ;</div>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3>🐛 Bug Detection & Fixing</h3>
+                            <p>Become a debugging expert! Identify syntax errors, logic mistakes, and learn to write clean, error-free Java code.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-visual">
+                            <div class="mock-output">
+                                <div class="output-question">What will this print?</div>
+                                <div class="output-code">System.out.println(10 / 3);</div>
+                                <div class="output-answer">Answer: 3</div>
+                            </div>
+                        </div>
+                        <div class="feature-content">
+                            <h3>🎯 Output Prediction</h3>
+                            <p>Develop logical thinking by predicting code outputs. Understand how Java processes different operations and control structures.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="learning-path">
+                <h2>🛤️ Your Learning Path</h2>
+                <div class="path-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Master the Basics</h3>
+                            <p>Start with variables, data types, and basic Java syntax</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Control the Flow</h3>
+                            <p>Learn loops, conditionals, and program control structures</p>
+                        </div>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Think Like a Programmer</h3>
+                            <p>Predict outputs and understand complex code logic</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2>Ready to Become a Java Developer?</h2>
+                <p>Join thousands of learners who chose the fun way to master Java programming</p>
+                <button class="btn btn-hero" onclick="game.startLearning()">🚀 Begin Your Journey</button>
+                <p class="cta-note">✅ No registration required • ✅ 100% Free • ✅ Start immediately</p>
+            </div>
+        </div>
+
+        <div id="gameSelection" class="game-selection" style="display: none;">
+            <div class="game-card" data-level="1">
+                <div class="game-icon">🔍</div>
+                <h3>Level 1: Code Quest</h3>
+                <p>Fill in missing parts of simple Java code and learn about variables and data types.</p>
+                <div class="concept-tag">Variables & Data Types</div>
+            </div>
+            
+            <div class="game-card locked" data-level="2">
+                <div class="game-icon">🐛</div>
+                <h3>Level 2: Bug Hunter</h3>
+                <p>Identify and correct syntax errors in Java code while mastering loops and conditionals.</p>
+                <div class="concept-tag">Loops & Conditionals</div>
+            </div>
+            
+            <div class="game-card locked" data-level="3">
+                <div class="game-icon">🎯</div>
+                <h3>Level 3: Output Predictor</h3>
+                <p>Predict the output of Java code snippets and master operators and control flow.</p>
+                <div class="concept-tag">Operators & Control Flow</div>
+            </div>
+        </div>
+
+        <!-- Level 1: Code Quest -->
+        <div id="level1" class="game-area">
+            <h2>🔍 Level 1: Code Quest</h2>
+            <div id="level1Questions"></div>
+        </div>
+
+        <!-- Level 2: Bug Hunter -->
+        <div id="level2" class="game-area">
+            <h2>🐛 Level 2: Bug Hunter</h2>
+            <div id="level2Questions"></div>
+        </div>
+
+        <!-- Level 3: Output Predictor -->
+        <div id="level3" class="game-area">
+            <h2>🎯 Level 3: Output Predictor</h2>
+            <div id="level3Questions"></div>
+        </div>
+    </main>
+
+    <script>
+        class JavaQuestGame {
+            constructor() {
+                this.currentLevel = 1;
+                this.currentQuestion = 0;
+                this.score = 0;
+                this.completedLevels = 0;
+                this.maxLevel = 1;
+                
+                this.gameData = {
+                    level1: [
+                        {
+                            question: "Complete the Java code to declare an integer variable:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        _____ age = 25;
+        System.out.println("Age: " + age);
+    }
+}`,
+                            answer: "int",
+                            options: ["int", "String", "double", "boolean"],
+                            explanation: "The 'int' keyword is used to declare integer variables in Java."
+                        },
+                        {
+                            question: "What data type should be used for storing text?",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        _____ name = "JavaQuest";
+        System.out.println("Welcome to " + name);
+    }
+}`,
+                            answer: "String",
+                            options: ["int", "String", "char", "float"],
+                            explanation: "String is used to store text/sequences of characters in Java."
+                        },
+                        {
+                            question: "Complete the variable declaration for a decimal number:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        _____ price = 19.99;
+                        System.out.println("Price: $" + price);
+    }
+}`,
+                            answer: "double",
+                            options: ["int", "String", "double", "boolean"],
+                            explanation: "The 'double' data type is used for decimal numbers in Java."
+                        }
+                    ],
+                    level2: [
+                        {
+                            question: "Find and fix the syntax error in this for loop:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        for (int i = 0; i < 5 i++) {
+            System.out.println("Count: " + i);
+        }
+    }
+}`,
+                            correctCode: `for (int i = 0; i < 5; i++) {`,
+                            error: "Missing semicolon after i < 5",
+                            options: [
+                                "Missing semicolon after i < 5",
+                                "Wrong variable name",
+                                "Missing parentheses",
+                                "Wrong operator"
+                            ],
+                            explanation: "For loops need semicolons to separate the three parts: initialization; condition; increment."
+                        },
+                        {
+                            question: "Identify the error in this if statement:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        int score = 85;
+        if (score > 90)
+            System.out.println("Excellent!");
+        else
+            System.out.println("Good job!");
+    }
+}`,
+                            correctCode: `if (score > 90) {`,
+                            error: "Missing curly braces",
+                            options: [
+                                "Missing curly braces",
+                                "Wrong comparison operator",
+                                "Missing semicolon",
+                                "Wrong variable type"
+                            ],
+                            explanation: "While single statements don't require braces, it's best practice to always use them for clarity."
+                        },
+                        {
+                            question: "Fix the while loop syntax error:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        int count = 0;
+        while count < 3 {
+            System.out.println("Count: " + count);
+            count++;
+        }
+    }
+}`,
+                            correctCode: `while (count < 3) {`,
+                            error: "Missing parentheses around condition",
+                            options: [
+                                "Missing parentheses around condition",
+                                "Wrong variable name",
+                                "Missing increment",
+                                "Wrong comparison"
+                            ],
+                            explanation: "While loop conditions must be enclosed in parentheses."
+                        }
+                    ],
+                    level3: [
+                        {
+                            question: "What will this code output?",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        int x = 10;
+        int y = 3;
+        System.out.println(x / y);
+    }
+}`,
+                            answer: "3",
+                            options: ["3", "3.33", "3.0", "10"],
+                            explanation: "Integer division in Java truncates the decimal part, so 10/3 = 3."
+                        },
+                        {
+                            question: "Predict the output of this conditional statement:",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        int age = 16;
+        if (age >= 18) {
+            System.out.println("Adult");
+        } else {
+            System.out.println("Minor");
+        }
+    }
+}`,
+                            answer: "Minor",
+                            options: ["Adult", "Minor", "16", "Error"],
+                            explanation: "Since 16 is less than 18, the else block executes, printing 'Minor'."
+                        },
+                        {
+                            question: "What does this loop print?",
+                            code: `public class Main {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 3; i++) {
+            System.out.print(i * 2 + " ");
+        }
+    }
+}`,
+                            answer: "2 4 6 ",
+                            options: ["1 2 3 ", "2 4 6 ", "0 2 4 ", "3 6 9 "],
+                            explanation: "The loop runs 3 times: i=1 prints 2, i=2 prints 4, i=3 prints 6."
+                        }
+                    ]
+                };
+                
+                this.init();
+            }
+
+            init() {
+                this.updateUI();
+                this.bindEvents();
+                this.loadLevel1Questions();
+                this.loadLevel2Questions();
+                this.loadLevel3Questions();
+            }
+
+            bindEvents() {
+                document.querySelectorAll('.game-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const level = parseInt(e.currentTarget.dataset.level);
+                        if (level <= this.maxLevel) {
+                            this.startLevel(level);
+                        }
+                    });
+                });
+            }
+
+            updateUI() {
+                document.getElementById('totalScore').textContent = this.score;
+                document.getElementById('currentLevel').textContent = this.currentLevel;
+                document.getElementById('completedLevels').textContent = this.completedLevels;
+                
+                const progress = (this.completedLevels / 3) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+
+                // Update game card states
+                document.querySelectorAll('.game-card').forEach(card => {
+                    const level = parseInt(card.dataset.level);
+                    card.classList.remove('locked', 'active');
+                    
+                    if (level > this.maxLevel) {
+                        card.classList.add('locked');
+                    } else if (level === this.currentLevel) {
+                        card.classList.add('active');
+                    }
+                });
+            }
+
+            startLevel(level) {
+                this.currentLevel = level;
+                this.currentQuestion = 0;
+                
+                // Hide game selection and show level
+                document.getElementById('gameSelection').style.display = 'none';
+                document.querySelectorAll('.game-area').forEach(area => {
+                    area.classList.remove('active');
+                });
+                document.getElementById(`level${level}`).classList.add('active');
+                
+                this.updateUI();
+            }
+
+            loadLevel1Questions() {
+                const container = document.getElementById('level1Questions');
+                container.innerHTML = '';
+                
+                this.gameData.level1.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `
+                        <h3>Question ${index + 1}</h3>
+                        <p>${q.question}</p>
+                        <div class="code-block">${q.code.replace('_____', '<input type="text" class="code-input" data-answer="' + q.answer + '" placeholder="Type here...">')}</div>
+                        <div class="options">
+                            ${q.options.map(option => `<div class="option" data-option="${option}">${option}</div>`).join('')}
+                        </div>
+                        <div class="feedback" style="display: none;"></div>
+                        <button class="btn" onclick="game.checkLevel1Answer(${index})">Submit Answer</button>
+                    `;
+                    container.appendChild(questionDiv);
+                });
+                
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.textAlign = 'center';
+                buttonContainer.style.marginTop = '30px';
+                
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn btn-secondary';
+                backBtn.textContent = 'Back to Menu';
+                backBtn.onclick = () => this.backToMenu();
+                
+                const homeBtn = document.createElement('button');
+                homeBtn.className = 'btn btn-secondary';
+                homeBtn.textContent = '🏠 Home';
+                homeBtn.onclick = () => this.backToLanding();
+                
+                buttonContainer.appendChild(backBtn);
+                buttonContainer.appendChild(homeBtn);
+                container.appendChild(buttonContainer);
+            }
+
+            loadLevel2Questions() {
+                const container = document.getElementById('level2Questions');
+                container.innerHTML = '';
+                
+                this.gameData.level2.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `
+                        <h3>Question ${index + 1}</h3>
+                        <p>${q.question}</p>
+                        <div class="code-block">${q.code}</div>
+                        <div class="options">
+                            ${q.options.map(option => `<div class="option" data-option="${option}">${option}</div>`).join('')}
+                        </div>
+                        <div class="feedback" style="display: none;"></div>
+                        <button class="btn" onclick="game.checkLevel2Answer(${index})">Submit Answer</button>
+                    `;
+                    container.appendChild(questionDiv);
+                });
+                
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.textAlign = 'center';
+                buttonContainer.style.marginTop = '30px';
+                
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn btn-secondary';
+                backBtn.textContent = 'Back to Menu';
+                backBtn.onclick = () => this.backToMenu();
+                
+                const homeBtn = document.createElement('button');
+                homeBtn.className = 'btn btn-secondary';
+                homeBtn.textContent = '🏠 Home';
+                homeBtn.onclick = () => this.backToLanding();
+                
+                buttonContainer.appendChild(backBtn);
+                buttonContainer.appendChild(homeBtn);
+                container.appendChild(buttonContainer);
+            }
+
+            loadLevel3Questions() {
+                const container = document.getElementById('level3Questions');
+                container.innerHTML = '';
+                
+                this.gameData.level3.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    questionDiv.innerHTML = `
+                        <h3>Question ${index + 1}</h3>
+                        <p>${q.question}</p>
+                        <div class="code-block">${q.code}</div>
+                        <div class="options">
+                            ${q.options.map(option => `<div class="option" data-option="${option}">${option}</div>`).join('')}
+                        </div>
+                        <div class="feedback" style="display: none;"></div>
+                        <button class="btn" onclick="game.checkLevel3Answer(${index})">Submit Answer</button>
+                    `;
+                    container.appendChild(questionDiv);
+                });
+                
+                const buttonContainer = document.createElement('div');
+                buttonContainer.style.textAlign = 'center';
+                buttonContainer.style.marginTop = '30px';
+                
+                const backBtn = document.createElement('button');
+                backBtn.className = 'btn btn-secondary';
+                backBtn.textContent = 'Back to Menu';
+                backBtn.onclick = () => this.backToMenu();
+                
+                const homeBtn = document.createElement('button');
+                homeBtn.className = 'btn btn-secondary';
+                homeBtn.textContent = '🏠 Home';
+                homeBtn.onclick = () => this.backToLanding();
+                
+                buttonContainer.appendChild(backBtn);
+                buttonContainer.appendChild(homeBtn);
+                container.appendChild(buttonContainer);
+            }
+
+            checkLevel1Answer(questionIndex) {
+                const question = document.querySelectorAll('#level1Questions .question')[questionIndex];
+                const input = question.querySelector('.code-input');
+                const selectedOption = question.querySelector('.option.selected');
+                const feedback = question.querySelector('.feedback');
+                const correctAnswer = this.gameData.level1[questionIndex].answer;
+                
+                let userAnswer = input.value.trim() || (selectedOption ? selectedOption.dataset.option : '');
+                
+                if (userAnswer.toLowerCase() === correctAnswer.toLowerCase()) {
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = '🎉 Correct! ' + this.gameData.level1[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                    this.score += 100;
+                    
+                    if (questionIndex === this.gameData.level1.length - 1) {
+                        setTimeout(() => this.completeLevel(1), 1500);
+                    }
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = '❌ Incorrect. ' + this.gameData.level1[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                }
+                
+                this.updateUI();
+            }
+
+            checkLevel2Answer(questionIndex) {
+                const question = document.querySelectorAll('#level2Questions .question')[questionIndex];
+                const selectedOption = question.querySelector('.option.selected');
+                const feedback = question.querySelector('.feedback');
+                const correctAnswer = this.gameData.level2[questionIndex].error;
+                
+                if (!selectedOption) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = 'Please select an answer first!';
+                    feedback.style.display = 'block';
+                    return;
+                }
+                
+                const userAnswer = selectedOption.dataset.option;
+                
+                if (userAnswer === correctAnswer) {
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = '🎉 Correct! ' + this.gameData.level2[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                    selectedOption.classList.add('correct');
+                    this.score += 150;
+                    
+                    if (questionIndex === this.gameData.level2.length - 1) {
+                        setTimeout(() => this.completeLevel(2), 1500);
+                    }
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = '❌ Incorrect. ' + this.gameData.level2[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                    selectedOption.classList.add('incorrect');
+                }
+                
+                this.updateUI();
+            }
+
+            checkLevel3Answer(questionIndex) {
+                const question = document.querySelectorAll('#level3Questions .question')[questionIndex];
+                const selectedOption = question.querySelector('.option.selected');
+                const feedback = question.querySelector('.feedback');
+                const correctAnswer = this.gameData.level3[questionIndex].answer;
+                
+                if (!selectedOption) {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = 'Please select an answer first!';
+                    feedback.style.display = 'block';
+                    return;
+                }
+                
+                const userAnswer = selectedOption.dataset.option;
+                
+                if (userAnswer === correctAnswer) {
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = '🎉 Correct! ' + this.gameData.level3[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                    selectedOption.classList.add('correct');
+                    this.score += 200;
+                    
+                    if (questionIndex === this.gameData.level3.length - 1) {
+                        setTimeout(() => this.completeLevel(3), 1500);
+                    }
+                } else {
+                    feedback.className = 'feedback incorrect';
+                    feedback.textContent = '❌ Incorrect. ' + this.gameData.level3[questionIndex].explanation;
+                    feedback.style.display = 'block';
+                    selectedOption.classList.add('incorrect');
+                }
+                
+                this.updateUI();
+            }
+
+            completeLevel(level) {
+                this.completedLevels = Math.max(this.completedLevels, level);
+                this.maxLevel = Math.min(this.maxLevel + 1, 3);
+                
+                const levelArea = document.getElementById(`level${level}`);
+                const completionDiv = document.createElement('div');
+                completionDiv.className = 'level-complete';
+                completionDiv.innerHTML = `
+                    <h2>🎉 Level ${level} Complete!</h2>
+                    <div class="stars">⭐⭐⭐</div>
+                    <p>Great job! You've mastered ${level === 1 ? 'Variables & Data Types' : level === 2 ? 'Loops & Conditionals' : 'Operators & Control Flow'}!</p>
+                    <button class="btn" onclick="game.backToMenu()">Continue to Next Level</button>
+                `;
+                
+                levelArea.appendChild(completionDiv);
+                this.updateUI();
+            }
+
+            startLearning() {
+                document.getElementById('landingPage').style.display = 'none';
+                document.getElementById('gameSelection').style.display = 'grid';
+                this.updateUI();
+            }
+
+            backToMenu() {
+                document.getElementById('gameSelection').style.display = 'grid';
+                document.querySelectorAll('.game-area').forEach(area => {
+                    area.classList.remove('active');
+                });
+                this.updateUI();
+            }
+
+            backToLanding() {
+                document.getElementById('landingPage').style.display = 'block';
+                document.getElementById('gameSelection').style.display = 'none';
+                document.querySelectorAll('.game-area').forEach(area => {
+                    area.classList.remove('active');
+                });
+            }
+        }
+
+        // Initialize game
+        const game = new JavaQuestGame();
+
+        // Add option selection functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('option')) {
+                const question = e.target.closest('.question');
+                question.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                e.target.classList.add('selected');
+            }
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'992f3cee70987ed0',t:'MTc2MTIwMTU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
